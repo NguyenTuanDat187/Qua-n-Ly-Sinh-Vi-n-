@@ -8,29 +8,23 @@ namespace QLSinhVien.Excel
 {
     public class ExcelService
     {
-        private string filePath = "sinhvien.xlsx";
-
-        public void Save(List<SinhVien> list)
+        public void ExportToExcel(List<SinhVien> list, string filePath)
         {
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (var package = new ExcelPackage())
             {
                 var ws = package.Workbook.Worksheets.Add("SinhVien");
 
-                // 🔥 Header
-                string[] headers = {
-                    "MaSV","TenSV","GioiTinh","Khoa","Nganh",
-                    "Lop","NgaySinh","TrangThai","HocBong","KyLuat"
-                };
-
+                // Header
+                string[] headers = { "Mã SV", "Tên SV", "Giới tính", "Khoa", "Ngành", "Lớp", "Ngày sinh", "Trạng thái", "Học bổng", "Kỷ luật", "Khen thưởng" };
                 for (int i = 0; i < headers.Length; i++)
                 {
                     ws.Cells[1, i + 1].Value = headers[i];
                     ws.Cells[1, i + 1].Style.Font.Bold = true;
                 }
 
-                // 🔥 Data
+                // Data
                 for (int i = 0; i < list.Count; i++)
                 {
                     var sv = list[i];
@@ -40,57 +34,16 @@ namespace QLSinhVien.Excel
                     ws.Cells[i + 2, 4].Value = sv.Khoa;
                     ws.Cells[i + 2, 5].Value = sv.Nganh;
                     ws.Cells[i + 2, 6].Value = sv.Lop;
-                    ws.Cells[i + 2, 7].Value = sv.NgaySinh;
-                    ws.Cells[i + 2, 7].Style.Numberformat.Format = "dd/MM/yyyy";
+                    ws.Cells[i + 2, 7].Value = sv.NgaySinh.ToString("dd/MM/yyyy");
                     ws.Cells[i + 2, 8].Value = sv.TrangThai;
                     ws.Cells[i + 2, 9].Value = sv.HocBong;
                     ws.Cells[i + 2, 10].Value = sv.KyLuat;
+                    ws.Cells[i + 2, 11].Value = sv.KhenThuong;
                 }
 
-                // 🔥 Auto fit đẹp
                 ws.Cells.AutoFitColumns();
-
                 File.WriteAllBytes(filePath, package.GetAsByteArray());
             }
-        }
-
-        public List<SinhVien> Load()
-        {
-            var list = new List<SinhVien>();
-
-            if (!File.Exists(filePath)) return list;
-
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
-
-            using (var package = new ExcelPackage(new FileInfo(filePath)))
-            {
-                var ws = package.Workbook.Worksheets[0];
-
-                if (ws.Dimension == null) return list;
-
-                int rowCount = ws.Dimension.Rows;
-
-                for (int i = 2; i <= rowCount; i++)
-                {
-                    DateTime.TryParse(ws.Cells[i, 7].Text, out DateTime ngaySinh);
-
-                    list.Add(new SinhVien
-                    {
-                        MaSV = ws.Cells[i, 1].Text,
-                        TenSV = ws.Cells[i, 2].Text,
-                        GioiTinh = ws.Cells[i, 3].Text,
-                        Khoa = ws.Cells[i, 4].Text,
-                        Nganh = ws.Cells[i, 5].Text,
-                        Lop = ws.Cells[i, 6].Text,
-                        NgaySinh = ngaySinh,
-                        TrangThai = ws.Cells[i, 8].Text,
-                        HocBong = ws.Cells[i, 9].Text,
-                        KyLuat = ws.Cells[i, 10].Text
-                    });
-                }
-            }
-
-            return list;
         }
     }
 }

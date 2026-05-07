@@ -4,29 +4,30 @@ namespace QLSinhVien.Models
 {
     public class SinhVien
     {
-        // Khóa chính
+        // Thông tin cơ bản
         public string MaSV { get; set; }
-
         public string TenSV { get; set; }
         public string GioiTinh { get; set; }
         public DateTime NgaySinh { get; set; }
 
-        // Tổ chức lớp học
+        // Thông tin học vụ
         public string Khoa { get; set; }
         public string Nganh { get; set; }
         public string Lop { get; set; }
 
-        // Quản lý tình trạng và thành tích
-        public string TrangThai { get; set; } // Ví dụ: Đang học, Bảo lưu, Thôi học
-        public string HocBong { get; set; }   // Ví dụ: Loại Xuất sắc, Khá, Không
-        public string KyLuat { get; set; }    // Ví dụ: Cảnh cáo, Khiển trách, Không
+        // Thông tin trạng thái & Đánh giá
+        public string TrangThai { get; set; }  // Đang học, Bảo lưu, Thôi học, Rút hồ sơ
+        public string HocBong { get; set; }    // Xuất sắc, Giỏi, Khá, Không
+        public string KyLuat { get; set; }     // Cảnh cáo, Khiển trách, Không
+        public string KhenThuong { get; set; } // Các hình thức khen thưởng khác
 
-        // Constructor mặc định để tránh lỗi null khi khởi tạo
+        // Constructor thiết lập giá trị mặc định
         public SinhVien()
         {
             TrangThai = "Đang học";
             HocBong = "Không";
             KyLuat = "Không";
+            KhenThuong = "Không";
             NgaySinh = DateTime.Now;
         }
     }
